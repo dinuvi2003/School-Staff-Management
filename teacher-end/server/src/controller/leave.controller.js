@@ -1,0 +1,170 @@
+const supabase_client = require('../config/supabase')
+const BACKEND_URL = process.env.BACKEND_URL
+
+exports.getAllLeaves = async(req, res) => {
+    let { data: leave, error } = await supabase_client
+            .from('leave')
+            .select('*')
+    
+    if(!error) {
+
+        const data_size = leave.length
+
+        if(data_size > 0) {
+            return res.status(200).json({
+                leaves : leave
+            })
+        }
+
+        return res.status(404).json({
+            message : "There is no any valid data about leaves." 
+        })
+        
+    }
+
+    res.json({
+        error : `Something went wrong in leave data acessing process ${error}`
+    }),400
+}
+
+
+exports.getSingleLeaveDetails = async(req, res) => {
+
+    const leaveId = req.params.id
+
+    let { data: leave, error } = await supabase_client
+            .from('leave')
+            .select('*')
+            .eq("leave_id", leaveId)
+    
+    if(!error) {
+
+        const data_size = leave.length
+
+        if(data_size > 0) {
+            return res.status(200).json({
+                leave : leave
+            })
+        }
+        
+        return res.status(404).status({
+            message : "There is no any valid leave related to this id."
+        })
+        
+    }
+            
+    return res.status(400).json({
+        error : `Something went wrong in single leave data accessing process... ${error}`
+    })
+}
+
+
+exports.approveLeaveStatus = async(req, res) => {
+
+    const leave_id = req.params.id
+
+    try{
+        const leave_res = await fetch(`${BACKEND_URL}/api/leave/${leave_id}`)
+        const leave_data = await leave_res.json()
+        const leave_status = leave_data.leave[0].leave_status
+
+        if(!leave_res.ok) {
+            throw new Error("There something went wrong in leave data accessing process.")
+        } 
+    
+        if(leave_status == "PENDING"){
+            const { data, error } = await supabase_client
+                .from('leave')
+                .update({ leave_status: 'APPROVED' })
+                .eq('leave_id', leave_id)
+                .select()
+            
+            if(!error) {
+                return res.status(201).json(data)
+            }
+    
+            return res.status(400).json({
+                message : "Something went wrong in leave status approve process.    "
+            })
+        }
+    }
+    catch(err){
+        return res.status(400).json({
+            message : `Something went wrong in leave approve update processs.. ${err}`
+        })
+    }
+}
+
+
+exports.rejectLeaveStatus = async(req, res) => {
+
+    const leave_id = req.params.id
+
+    try{
+        const leave_res = await fetch(`${BACKEND_URL}/api/leave/${leave_id}`)
+        const leave_data = await leave_res.json()
+        const leave_status = leave_data.leave[0].leave_status
+
+        if(!leave_res.ok) {
+            throw new Error("There something went wrong in leave data accessing process.")
+        } 
+    
+        if(leave_status == "PENDING"){
+            const { data, error } = await supabase_client
+                .from('leave')
+                .update({ leave_status: 'REJECTED' })
+                .eq('leave_id', leave_id)
+                .select()
+            
+            if(!error) {
+                return res.status(201).json(data)
+            }
+    
+            return res.status(400).json({
+                message : "Something went wrong in leave status approve process.    "
+            })
+        }
+    }
+    catch(err){
+        return res.status(400).json({
+            message : `Something went wrong in leave approve update processs.. ${err}`
+        })
+    }
+}
+
+
+exports.cancleLeaveStatus = async(req, res) => {
+
+    const leave_id = req.params.id
+
+    try{
+        const leave_res = await fetch(`${BACKEND_URL}/api/leave/${leave_id}`)
+        const leave_data = await leave_res.json()
+        const leave_status = leave_data.leave[0].leave_status
+
+        if(!leave_res.ok) {
+            throw new Error("There something went wrong in leave data accessing process.")
+        } 
+    
+        if(leave_status == "PENDING"){
+            const { data, error } = await supabase_client
+                .from('leave')
+                .update({ leave_status: 'CANCELLED' })
+                .eq('leave_id', leave_id)
+                .select()
+            
+            if(!error) {
+                return res.status(201).json(data)
+            }
+    
+            return res.status(400).json({
+                message : "Something went wrong in leave status approve process.    "
+            })
+        }
+    }
+    catch(err){
+        return res.status(400).json({
+            message : `Something went wrong in leave approve update processs.. ${err}`
+        })
+    }
+}
