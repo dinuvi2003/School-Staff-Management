@@ -27,6 +27,7 @@ exports.getAllTeachers = async(req,res) => {
 } 
 
 
+
 exports.getSingleTeacherDetails = async(req, res) => {
 
     const teacher_id = req.params.id
