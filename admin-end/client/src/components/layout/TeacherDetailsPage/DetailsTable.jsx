@@ -1,7 +1,40 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { api } from '@/lib/apiClient';
+import { useRouter } from 'next/navigation';
 
-export default function DetailsTable ({ rows = [] }) {
+export default function DetailsTable () {
+
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const res = await api.get('/api/teachers'); 
+        setRows(res.data?.data || []);
+      } catch (e) {
+        setErr(e?.response?.data?.message || 'Failed to fetch teacher details');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTeachers();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this teacher?')) return;
+
+    try {
+      await api.delete(`/api/teachers/${id}`);
+      setRows((prev) => prev.filter((row) => row.id !== id));
+    } catch (e) {
+      alert(e?.response?.data?.message || 'Failed to delete teacher');
+    }
+  };
+
   return (
     <section className="mx-auto max-w-6xl px-4">
       <div className="flex flex-wrap items-center gap-3 py-4">
@@ -50,15 +83,19 @@ export default function DetailsTable ({ rows = [] }) {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border bg-white">
+        {loading ? (
+          <p className="p-6 text-center">Loading...</p>
+        ) : err ? (
+          <p className="p-6 text-center text-red-600">{err}</p>
+        ) : (
         <table className="min-w-full text-sm">
           <thead className="bg-indigo-50/60 text-gray-700">
             <tr>
               <Th>Teacher Name</Th>
               <Th>NIC</Th>
+              <Th>Service Type</Th>
               <Th>Grade</Th>
-              <Th center>View</Th>
-              <Th center>Edit</Th>
-              <Th center>Delete</Th>
+              <Th center>Actions</Th>
             </tr>
           </thead>
 
@@ -68,27 +105,27 @@ export default function DetailsTable ({ rows = [] }) {
                 <tr key={r.id ?? idx} className={idx % 2 ? "bg-white" : "bg-gray-50/30"}>
                   <Td>{r.name}</Td>
                   <Td>{r.nic}</Td>
+                  <Td>{r.serviceType}</Td>
                   <Td>{r.grade}</Td>
                   <Td center>
-                    <GhostIcon>👁️</GhostIcon>
-                  </Td>
-                  <Td center>
-                    <GhostIcon>✏️</GhostIcon>
-                  </Td>
-                  <Td center>
-                    <GhostIcon>🗑️</GhostIcon>
+                    <div className="flex items-center justify-center gap-2">
+                      <GhostIcon title="View" onClick={() => router.push(`/TeacherDetails/${r.id}`)}>👁️</GhostIcon>
+                      <GhostIcon title="Edit">✏️</GhostIcon>
+                      <GhostIcon title="Delete" onClick={() => handleDelete(r.id)}>🗑️</GhostIcon>
+                    </div>
                   </Td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-gray-500">
+                <td colSpan={5} className="p-8 text-center text-gray-500">
                   No data yet.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+        )}
       </div>
 
       

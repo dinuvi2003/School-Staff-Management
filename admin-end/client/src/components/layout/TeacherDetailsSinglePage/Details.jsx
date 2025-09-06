@@ -1,7 +1,24 @@
+"use client";
 import React from 'react'
 import Image from 'next/image';
+import { useRouter } from "next/navigation";
 
-export default function Details () {
+export default function Details ({
+  teacher = {
+    name: "",
+    nic: "",
+    address: "",
+    contactNumber: "",
+    email: "",
+    birthDate: "",
+    grade: "",
+    serviceType: "",
+    firstAppointmentDate: "",
+    photo: "/teacher.png",
+  },
+}) {
+
+  const router = useRouter();
 
   const Row = ({ label, value }) => (
     <div className="grid grid-cols-[170px_12px_1fr] items-start gap-2 py-2">
@@ -16,22 +33,22 @@ export default function Details () {
       <div className="mb-6 flex items-center gap-3">
         <button
           type="button"
-        //   onClick={() => router.back()}
+          onClick={() => router.back()}
           className="inline-flex h-9 w-9 items-center justify-center rounded-full text-indigo-700 hover:bg-indigo-50"
           aria-label="Back"
           title="Back"
         >
           ←
         </button>
-        <h1 className="text-2xl font-semibold text-indigo-900"></h1>
+        <h1 className="text-2xl font-semibold text-indigo-900">{teacher.name}</h1>
       </div>
 
       {/* Photo */}
       <div className="mb-8 flex justify-center">
         <div className="rounded-lg border border-gray-200 p-2">
           <Image
-            // src={teacher.photo}
-            // alt={teacher.name}
+            src={teacher.photo}
+            alt={teacher.name}
             width={180}
             height={180}
             className="rounded-md object-cover"
@@ -41,15 +58,15 @@ export default function Details () {
       </div>
 
       <div className="mx-auto max-w-3xl">
-        <Row label="Full Name"  />
-        <Row label="NIC"  />
-        <Row label="Address"  />
-        <Row label="Contact Number"  />
-        <Row label="Email"  />
-        <Row label="Birth Date"  />
-        <Row label="Grade"  />
-        <Row label="Service Type"  />
-        <Row label="First Appointment Date" />
+        <Row label="Full Name" value={teacher.name} />
+        <Row label="NIC" value={teacher.nic} />
+        <Row label="Address" value={teacher.address} />
+        <Row label="Contact Number" value={teacher.contactNumber} />
+        <Row label="Email" value={teacher.email} />
+        <Row label="Birth Date" value={teacher.birthDate} />
+        <Row label="Grade" value={teacher.grade} />
+        <Row label="Service Type" value={teacher.serviceType} />
+        <Row label="First Appointment Date" value={teacher.firstAppointmentDate} />
       </div>
 
       <div className="mt-10">
