@@ -12,6 +12,7 @@ const LeaveSection = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [totalLeavesRequests, setTotalLeavesRequests] = useState(0);
   const [pendingLeaveRequests, setPendingLeaveRequests] = useState(0);
+  const [rejectedLeaveRequests, setRejectedLeaveRequests] = useState(0);
 
   const [isPending, setIsPending] = useState(true);
 
@@ -27,8 +28,12 @@ const LeaveSection = () => {
       const pendingLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave/teacher/${teacher_nic}/pending`)
       const pendingLeaveData = await pendingLeaveResponse.json();
 
+      const rejectedLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave/teacher/${teacher_nic}/rejected`)
+      const rejectedLeaveData = await rejectedLeaveResponse.json();
+
       setTotalLeavesRequests(teacherAllLeavesData.leaves);
       setPendingLeaveRequests(pendingLeaveData.leaves);
+      setRejectedLeaveRequests(rejectedLeaveData.leaves);
     }
 
     fetchLeaveData();
@@ -53,10 +58,11 @@ const LeaveSection = () => {
         </div>
 
         {/* leave analytics designs */}
-        <div className="grid grid-cols-3 gap-2">
-          <LeaveCard title="Total Leaves Requested" value={totalLeavesRequests.length} unit="days" icon="🌴" />
-          <LeaveCard title="Pending Leaves" value={pendingLeaveRequests.length} unit="days" icon="🌴" />
-          <LeaveCard title="Available Leaves" value={process.env.TOTAL_LEAVES | 30 - totalLeavesRequests.length} unit="days" icon="🌴" />
+        <div className="grid grid-cols-4 gap-2">
+          <LeaveCard title="Total Leaves Requested" value={totalLeavesRequests.length} unit="days" />
+          <LeaveCard title="Pending Leaves" value={pendingLeaveRequests.length} unit="days" />
+          <LeaveCard title="Rejected Leaves" value={rejectedLeaveRequests.length} unit="days" />
+          <LeaveCard title="Available Leaves" value={process.env.TOTAL_LEAVES | 30 - totalLeavesRequests.length} unit="days" />
         </div>
 
         {/* Popup for leave request */}

@@ -33,7 +33,7 @@ const PendingLeaveDetails = () => {
         isLoading ? (
             <p>Loading pending leaves...</p>
         ) : (
-            <ul>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4'>
                 {pendingLeaves.slice(0, 5).map((leave, index) => (
                     <div key={index} className='p-4 mb-2 border border-gray-200/30 rounded shadow-sm flex justify-between items-center'>
                         <div>
@@ -46,7 +46,7 @@ const PendingLeaveDetails = () => {
                         </div>
                     </div>
                 ))}
-            </ul>
+            </div>
         )
       }
     </div>

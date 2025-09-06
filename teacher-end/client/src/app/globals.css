@@ -39,3 +39,7 @@ input, select{
 label{
   @apply text-[12px] text-gray-700 mb-2
 }
+
+.background-glow{
+  background-image: radial-gradient(closest-side, rgba(255, 255, 255, 0.15), transparent);
+}
