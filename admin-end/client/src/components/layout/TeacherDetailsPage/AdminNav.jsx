@@ -6,6 +6,7 @@ export default function AdminNav ({ active = "teachers", onChange }) {
     { key: "teachers", label: "Teacher Details" },
     { key: "leave", label: "Leave Requests" },
     { key: "transfers", label: "Transfers & Promotions" },
+    { key: "new-teacher", label: "Add Teacher" },
   ];
   return (
     <nav className="w-full border-b bg-indigo-50/50">
