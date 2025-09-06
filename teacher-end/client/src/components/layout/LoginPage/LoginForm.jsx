@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
@@ -14,17 +15,23 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
+
+  // temporaty handle
+  const handleLoginButtonTemp = () => {
+    router.replace('/teacher-dashboard');
+  }
+
   async function onSubmit(e) {
     e.preventDefault();
     setErr('');
     setLoading(true);
     try {
-      const res = await login({ nic, password }); // expects { ok: boolean, error?: string }
+      const res = await login({ nic, password });
       if (!res?.ok) {
         setErr(res?.error || 'Login failed');
         return;
       }
-      router.replace('/'); // redirect after success
+      router.replace('/');
     } catch (e) {
       setErr(e?.message || 'Login failed');
     } finally {
@@ -33,7 +40,7 @@ export default function LoginForm() {
   }
 
   return (
-    <section className="mx-auto mt-10 w-full max-w-md rounded-2xl bg-white p-8 shadow min-h-[300px]">
+    <section className="mx-auto mt-10 w-full max-w-[400px] rounded-2xl bg-white p-8 shadow min-h-[300px]">
       <h2 className="mb-6 text-center text-lg font-semibold">Staff Login</h2>
 
       <form className="space-y-6">
@@ -97,7 +104,8 @@ export default function LoginForm() {
         </div>
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleLoginButtonTemp}
           disabled={loading}
           className="w-full rounded-md bg-[#1E56C5] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
         >
