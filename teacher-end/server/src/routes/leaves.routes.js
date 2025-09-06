@@ -7,6 +7,7 @@ router.get("/:id", leaveContraoller.getSingleLeaveDetails)
 
 router.get("/teacher/:id", leaveContraoller.getLeavesByTeacherId)
 router.get("/teacher/:id/pending", leaveContraoller.getPendingLeavesByTeacherId)
+router.get("/teacher/:id/rejected", leaveContraoller.getRejectLeavesByTeacherId)
 
 router.patch("/:id/approve", leaveContraoller.approveLeaveStatus)
 router.patch("/:id/reject", leaveContraoller.rejectLeaveStatus)
