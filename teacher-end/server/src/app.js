@@ -1,9 +1,19 @@
+
 const express = require('express')
+const cors = require('cors');
 const app = express()
+
 
 
 // middlewares
 app.use(express.json())
+app.use(cors({
+	origin: [
+		'http://localhost:3000',
+		'http://localhost:3001'
+	],
+	credentials: true
+}));
 
 // import routers
 const teacherRouter = require('./routes/teacher.routes')
