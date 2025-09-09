@@ -1,4 +1,3 @@
-// src/middleware/auth.js
 import { COOKIE } from '../services/utils/cookies.js';
 import { verifyAccessJwt } from '../services/utils/crypto.js';
 

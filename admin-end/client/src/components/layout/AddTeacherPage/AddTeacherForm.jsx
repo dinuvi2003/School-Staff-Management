@@ -5,7 +5,7 @@ import { User, Mail, Phone, MapPin, Calendar, Users, GraduationCap, Upload, X, C
 import { addTeacher } from "../../../utils/addTeacher";
 import { SERVICE_OPTIONS, getAvailableGraders } from "../../../utils/formUtils";
 
-export default function AddTeacherForm() {
+export default function  AddTeacherForm() {
   const [form, setForm] = useState({
     fullName: "",
     nic: "",
