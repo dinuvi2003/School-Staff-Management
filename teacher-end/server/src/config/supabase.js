@@ -1,16 +1,20 @@
-const {createClient} = require('@supabase/supabase-js')
+import { createClient } from '@supabase/supabase-js';
+import { config } from 'dotenv'
 
-const SUPABASE_URL= process.env.SUPABASE_URL
-const SUPABASE_ANNON_KEY = process.env.SUPABASE_ANON_KEY
+config();
 
-let supabase_client = null
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-try{
-    supabase_client = createClient(SUPABASE_URL, SUPABASE_ANNON_KEY)
-    console.log("database successfully connected")
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    console.error('Missing SUPABASE envs'); process.exit(1);
 }
-catch(err) {
-    console.log(`Something went wrongin database connection... ${err}`)
-}
 
-module.exports = supabase_client
+export const db = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false }
+});
+
+export const supabase_client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+

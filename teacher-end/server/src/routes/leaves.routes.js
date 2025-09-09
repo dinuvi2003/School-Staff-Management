@@ -1,11 +1,11 @@
-const express = require('express')
-const router = express.Router()
-const leaveContraoller = require("../controller/leave.controller")
+import { Router } from 'express'
+const router = Router()
+import { getAllLeaves, getSingleLeaveDetails, approveLeaveStatus, rejectLeaveStatus, cancleLeaveStatus } from "../controller/leave.controller.js"
 
-router.get("/", leaveContraoller.getAllLeaves)
-router.get("/:id", leaveContraoller.getSingleLeaveDetails)
-router.patch("/:id/approve", leaveContraoller.approveLeaveStatus)
-router.patch("/:id/reject", leaveContraoller.rejectLeaveStatus)
-router.patch("/:id/cancel", leaveContraoller.cancleLeaveStatus)
+router.get("/", getAllLeaves)
+router.get("/:id", getSingleLeaveDetails)
+router.patch("/:id/approve", approveLeaveStatus)
+router.patch("/:id/reject", rejectLeaveStatus)
+router.patch("/:id/cancel", cancleLeaveStatus)
 
-module.exports = router
+export default router

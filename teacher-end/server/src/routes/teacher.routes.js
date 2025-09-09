@@ -1,7 +1,7 @@
-const express = require('express')
+import { Router } from 'express';
+import { getAllTeachers, getSingleTeacherDetails, addNewTeacher } from "../controller/techer.controller.js";
 
-const router = express.Router()
-const teacherController = require("../controller/techer.controller")
+const router = Router()
 
 const API_TOKEN = process.env.API_TOKEN || "12345677";
 function authGuard(req, res, next) {
@@ -13,9 +13,9 @@ function authGuard(req, res, next) {
   next();
 }
 
-router.get("/", teacherController.getAllTeachers)
-router.get("/:id", teacherController.getSingleTeacherDetails)
+router.get("/", getAllTeachers)
+router.get("/:id", getSingleTeacherDetails)
 
-router.post("/add-new", authGuard, teacherController.addNewTeacher);
+router.post("/add-new", authGuard, addNewTeacher);
 
-module.exports = router
+export default router
