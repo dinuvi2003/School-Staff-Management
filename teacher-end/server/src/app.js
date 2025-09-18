@@ -11,17 +11,17 @@ import inviteRouter from './routes/invite.routes.js'
 import { startTokenCleanupJob } from './services/jobs/cleanupTokens.js'
 
 dotenv.config()
-const app = express()
 
 // middlewares
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin: process.env.WEB_ORIGIN,
-    credentials: true
-}));
+const express = require('express')
+const cors = require('cors');
+const app = express()
+
+
 
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }); // 100 requests per 15 minutes
 app.use("/api/auth", authLimiter);

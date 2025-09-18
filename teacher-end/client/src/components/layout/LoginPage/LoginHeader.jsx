@@ -6,16 +6,8 @@ export default function AppHeader({
   subtitle = "Access your school staff records securely",
 }) {
   return (
-    <header className="flex flex-col items-center text-center">
-      <Image
-        src={logoSrc}
-        width={64}
-        height={64}
-        alt="Emblem of Sri Lanka"
-        className="mb-4"
-        priority
-      />
-      <h1 className="text-xl sm:text-2xl font-semibold">{title}</h1>
+    <header className="flex flex-col items-center text-center w-4/6 mx-auto">
+      <h1 className="text-xl sm:text-2xl font-bold">{title}</h1>
       <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
     </header>
   );
