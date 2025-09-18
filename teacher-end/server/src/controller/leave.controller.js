@@ -170,97 +170,97 @@ export async function cancleLeaveStatus(req, res) {
 }
 
 
-exports.getLeavesByTeacherId = async(req, res) => {
-
-    const teeacher_nic = req.params.id
-
-   let { data: leave, error } = await supabase_client
-            .from('leave')
-            .select('*')
-            .eq('teacher_nic' , teeacher_nic)
-    
-    if(!error) {
-
-        const data_size = leave.length
-
-        if(data_size > 0) {
-            return res.status(200).json({
-                leaves : leave
-            })
-        }
-
-        return res.status(404).json({
-            message : "There is no any valid data about leaves." 
-        })
-        
-    }
-
-    res.json({
-        error : `Something went wrong in leave data acessing process ${error}`
-    }),400
-}
-
-
-exports.getPendingLeavesByTeacherId = async(req, res) => {
+export async function getLeavesByTeacherId(req, res) {
 
     const teacher_nic = req.params.id
 
-   let { data: leave, error } = await supabase_client
-            .from('leave')
-            .select('*')
-            .eq('teacher_nic' , teacher_nic)
-            .eq('leave_status', 'PENDING')
+    let { data: leave, error } = await supabase_client
+        .from('leave')
+        .select('*')
+        .eq('teacher_nic', teacher_nic)
 
-    if(!error) {
+    if (!error) {
 
         const data_size = leave.length
 
-        if(data_size > 0) {
+        if (data_size > 0) {
             return res.status(200).json({
-                leaves : leave
+                leaves: leave
             })
         }
 
         return res.status(404).json({
-            message : "There is no any valid data about leaves." 
+            message: "There is no any valid data about leaves."
         })
 
     }
 
     res.json({
-        error : `Something went wrong in leave data acessing process ${error}`
-    }),400
+        error: `Something went wrong in leave data acessing process ${error}`
+    }), 400
 }
 
 
-exports.getRejectLeavesByTeacherId = async(req, res) => {
+export async function getPendingLeavesByTeacherId(req, res) {
 
     const teacher_nic = req.params.id
 
-   let { data: leave, error } = await supabase_client
-            .from('leave')
-            .select('*')
-            .eq('teacher_nic' , teacher_nic)
-            .eq('leave_status', 'REJECTED')
+    let { data: leave, error } = await supabase_client
+        .from('leave')
+        .select('*')
+        .eq('teacher_nic', teacher_nic)
+        .eq('leave_status', 'PENDING')
 
-    if(!error) {
+    if (!error) {
 
         const data_size = leave.length
 
-        if(data_size > 0) {
+        if (data_size > 0) {
             return res.status(200).json({
-                leaves : leave
+                leaves: leave
             })
         }
 
         return res.status(404).json({
-            message : "There is no any valid data about leaves." 
+            message: "There is no any valid data about leaves."
         })
 
     }
 
     res.json({
-        error : `Something went wrong in leave data acessing process ${error}`
-    }),400
+        error: `Something went wrong in leave data acessing process ${error}`
+    }), 400
+}
+
+
+export async function getRejectLeavesByTeacherId(req, res) {
+
+    const teacher_nic = req.params.id
+
+    let { data: leave, error } = await supabase_client
+        .from('leave')
+        .select('*')
+        .eq('teacher_nic', teacher_nic)
+        .eq('leave_status', 'REJECTED')
+
+    if (!error) {
+
+        const data_size = leave.length
+
+        if (data_size > 0) {
+            return res.status(200).json({
+                leaves: leave
+            })
+        }
+
+        return res.status(404).json({
+            message: "There is no any valid data about leaves."
+        })
+
+    }
+
+    res.json({
+        error: `Something went wrong in leave data acessing process ${error}`
+    }), 400
 }
 

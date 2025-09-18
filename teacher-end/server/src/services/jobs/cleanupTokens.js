@@ -1,4 +1,4 @@
-import { deleteExpiredActionTokens } from "../../handlers/repositories/authRepositories/tokenRepository"
+import { deleteExpiredActionTokens } from "../../handlers/repositories/authRepositories/tokenRepository.js"
 
 export async function startTokenCleanupJob() {
     setInterval(async () => {

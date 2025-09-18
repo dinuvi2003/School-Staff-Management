@@ -1,8 +1,8 @@
-import { FROM, mailer } from "../../../config/email";
-import { inviteEmailHtml, inviteEmailText } from "../../../services/email/templates/inviteEmail";
-import { hashToken, randomToken } from "../../../services/utils/crypto";
-import { createInviteToken, deleteInviteTokensForUser } from "../../repositories/authRepositories/tokenRepository";
-import { getTeacherByEmail } from "../../repositories/teacherRepositories/teacherRepository";
+import { FROM, mailer } from "../../../config/email.js";
+import { inviteEmailHtml, inviteEmailText } from "../../../services/email/templates/inviteEmail.js";
+import { hashToken, randomToken } from "../../../services/utils/crypto.js";
+import { createInviteToken, deleteInviteTokensForUser } from "../../repositories/authRepositories/tokenRepository.js";
+import { getTeacherByEmail } from "../../repositories/teacherRepositories/teacherRepository.js";
 
 const INVITE_TTL_HOURS = Number(process.env.INVITE_TOKEN_TTL_HOURS || 1);
 const WEB_ORIGIN = process.env.WEB_ORIGIN || 'http://localhost:3000';

@@ -1,5 +1,5 @@
-import { db } from "../../../config/supabase";
-import { addDays, addHours } from "../../../services/utils/time";
+import { db } from "../../../config/supabase.js";
+import { addDays, addHours } from "../../../services/utils/time.js";
 
 export async function storeRefreshToken(user_id, token_hash, ttlDays) {
     const expires_at = addDays(new Date(), ttlDays);

@@ -1,7 +1,7 @@
-import { ACCESS_TOKEN_TTL_MIN, REFRESH_TOKEN_TTL_DAYS } from "../../../config/security";
-import { hashToken, randomToken, signAccessJwt, verifyPassword } from "../../../services/utils/crypto";
-import { storeRefreshToken } from "../../repositories/authRepositories/tokenRepository";
-import { getTeacherByEmail } from "../../repositories/teacherRepositories/teacherRepository";
+import { ACCESS_TOKEN_TTL_MIN, REFRESH_TOKEN_TTL_DAYS } from "../../../config/security.js";
+import { hashToken, randomToken, signAccessJwt, verifyPassword } from "../../../services/utils/crypto.js";
+import { storeRefreshToken } from "../../repositories/authRepositories/tokenRepository.js";
+import { getTeacherByEmail } from "../../repositories/teacherRepositories/teacherRepository.js";
 
 
 export async function loginUseCase(email, password) {
@@ -43,7 +43,7 @@ export async function loginUseCase(email, password) {
     const refreshPlain = randomToken(48);
     const refreshHash = hashToken(refreshPlain);
 
-    const storeRefreshToken = await storeRefreshToken(teacher.user_id, refreshHash, REFRESH_TOKEN_TTL_DAYS);
+    const insertRefreshToken = await storeRefreshToken(teacher.user_id, refreshHash, REFRESH_TOKEN_TTL_DAYS);
     if (storeRefreshToken.error) {
         return {
             ok: false,

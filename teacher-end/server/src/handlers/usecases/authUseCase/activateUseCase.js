@@ -1,6 +1,6 @@
-import { hashPassword } from "../../../services/utils/crypto";
-import { consumeInviteToken } from "../../repositories/authRepositories/tokenRepository";
-import { setTeacherPasswordHash } from "../../repositories/teacherRepositories/teacherRepository";
+import { hashPassword } from "../../../services/utils/crypto.js";
+import { consumeInviteToken } from "../../repositories/authRepositories/tokenRepository.js";
+import { setTeacherPasswordHash } from "../../repositories/teacherRepositories/teacherRepository.js";
 
 export async function activateUseCase({ token, user_id, password }) {
     if (!token || !user_id || !password) {

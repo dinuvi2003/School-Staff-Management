@@ -1,4 +1,4 @@
-import { setAuthCookies } from "../../../services/utils/cookies.js";
+import { setAccessCookie, setRefreshCookie } from "../../../services/utils/cookies.js";
 import { fail, ok } from "../../../services/utils/response.js";
 import { loginUseCase } from "../../usecases/authUseCase/loginUseCase.js";
 
@@ -16,14 +16,14 @@ export default async function loginController(req, res) {
         const refresh_token = session.refresh_token;
 
 
-        setAuthCookies(res, {
-            access_token,
-            refresh_token,
-            access_expires_sec: 15 * 60,     // 15 min
-            refresh_expires_sec: 7 * 24 * 60 * 60 // 7 days
-        });
+        setAccessCookie(res, access_token, 15); // 15 min
+        setRefreshCookie(res, refresh_token, 7); // 7 days
 
-        return ok(res, { role }, 'Login success');
+        return ok(res,
+            { logged_in: true, role: data.role },
+            'Login successful',
+        );
+
     } catch (e) {
         return fail(res, 'Login failed', 500, { detail: e?.message });
     }
