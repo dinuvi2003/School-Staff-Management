@@ -7,7 +7,7 @@ export const LeaveCard = ({ title, value, unit, icon }) => {
                 <div className='w-full'>
                     <div className='flex gap-2 items-center'>
                         <div className='bg-blue-100 p-2 rounded-lg'>
-                            {icon && <span className="text-xl">{icon}</span>}
+                            {icon && <span className="text-2xl">{icon}</span>}
                         </div>
                         <h3 className="m-0 text-xl font-semibold">{title}</h3>
                     </div>

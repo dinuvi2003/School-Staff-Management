@@ -7,6 +7,11 @@ import PrimaryButton from '@/components/ui/Button/PrimaryButton'
 import Popup from '@/components/layout/popup/Popup'
 import LeaveRequestForm from '@/components/layout/popup/LeaveRequestForm'
 import PendingLeaveDetails from './PendingLeaveDetails'
+import { MdOutlinePendingActions } from "react-icons/md";
+import { IoCalendarOutline } from "react-icons/io5";
+import { TbCalendarCancel } from "react-icons/tb";
+import { MdOutlineEventAvailable } from "react-icons/md";
+
 
 const LeaveSection = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -59,10 +64,10 @@ const LeaveSection = () => {
 
         {/* leave analytics designs */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-          <LeaveCard title="Total Leaves Requested" value={totalLeavesRequests.length} unit="days" />
-          <LeaveCard title="Pending Leaves" value={pendingLeaveRequests.length} unit="days" />
-          <LeaveCard title="Rejected Leaves" value={rejectedLeaveRequests.length} unit="days" />
-          <LeaveCard title="Available Leaves" value={process.env.TOTAL_LEAVES | 30 - totalLeavesRequests.length} unit="days" />
+          <LeaveCard title="Total Leaves Requested" value={totalLeavesRequests.length} unit="days" icon={<MdOutlineEventAvailable />} />
+          <LeaveCard title="Pending Leaves" value={pendingLeaveRequests.length} unit="days" icon={<MdOutlinePendingActions />} />
+          <LeaveCard title="Rejected Leaves" value={rejectedLeaveRequests.length} unit="days" icon={<TbCalendarCancel />} />
+          <LeaveCard title="Available Leaves" value={process.env.TOTAL_LEAVES | 30 - totalLeavesRequests.length} unit="days" icon={<IoCalendarOutline />} />
         </div>
 
         {/* Popup for leave request */}
