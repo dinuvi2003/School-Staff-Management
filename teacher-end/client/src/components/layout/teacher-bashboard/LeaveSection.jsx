@@ -58,7 +58,7 @@ const LeaveSection = () => {
         </div>
 
         {/* leave analytics designs */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
           <LeaveCard title="Total Leaves Requested" value={totalLeavesRequests.length} unit="days" />
           <LeaveCard title="Pending Leaves" value={pendingLeaveRequests.length} unit="days" />
           <LeaveCard title="Rejected Leaves" value={rejectedLeaveRequests.length} unit="days" />
