@@ -5,6 +5,8 @@ const leaveContraoller = require("../controller/leave.controller")
 router.get("/", leaveContraoller.getAllLeaves)
 router.get("/:id", leaveContraoller.getSingleLeaveDetails)
 
+router.post("/", leaveContraoller.createNewLeave)
+
 router.get("/teacher/:id", leaveContraoller.getLeavesByTeacherId)
 router.get("/teacher/:id/pending", leaveContraoller.getPendingLeavesByTeacherId)
 router.get("/teacher/:id/rejected", leaveContraoller.getRejectLeavesByTeacherId)
