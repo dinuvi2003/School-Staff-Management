@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useActionState } from 'react';
 import PrimaryButton from '@/components/ui/Button/PrimaryButton';
 import SectionTitle from '@/components/ui/Titles/SectionTitle';
+import { LeaveFormHandlingAction } from '@/app/actions/LeaveFormHandlingAction';
+
+const initialState = {
+  success : false,
+  message : '',
+  error : {}
+}
+
 
 const LeaveRequestForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    leave_type: '',
     leave_date: '',
     arrival_date: '',
     leave_day_count: 0
@@ -31,19 +38,14 @@ const LeaveRequestForm = ({ onClose }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Leave Request Data:', formData);
-    // Here you would typically send the data to your API
-    alert('Leave request submitted successfully!');
-    onClose();
-  };
+  const [state, action, isLoading] = useActionState(LeaveFormHandlingAction, initialState);
+  const userId = "NIC123456V";
 
   return (
     <div className="w-full max-w-md mx-auto">
         <SectionTitle title="Apply for Leave" />
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form action={action} className="space-y-4">
         {/* Leave Type */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -51,7 +53,6 @@ const LeaveRequestForm = ({ onClose }) => {
           </label>
           <select
             name="leave_type"
-            value={formData.leave_type}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
@@ -65,9 +66,13 @@ const LeaveRequestForm = ({ onClose }) => {
           </select>
         </div>
 
+        <div>
+          <input type="hidden" name="teacher_id" value={userId} />
+        </div>
+
 
         {/* double input section */}
-        <div className='flex items-center gap-3 w-full'>
+        <div className='flex flex-col gap-3 w-full'>
             {/* Leave Date */}
             <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -81,6 +86,11 @@ const LeaveRequestForm = ({ onClose }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
+                {
+                  state?.error?.leave_date && (
+                    <p className="text-sm text-red-600 mt-1">{state.error.leave_date}</p>
+                  )
+                }
             </div>
 
             {/* Arrival Date */}
@@ -97,6 +107,11 @@ const LeaveRequestForm = ({ onClose }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
+                {
+                  state?.error?.arrival_date && (
+                    <p className="text-sm text-red-600 mt-1">{state.error.arrival_date}</p>
+                  )
+                }
             </div>
         </div>
 
@@ -113,14 +128,14 @@ const LeaveRequestForm = ({ onClose }) => {
             disabled
             readOnly
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Automatically calculated based on leave and arrival dates
-          </p>
+
         </div>
 
         {/* Submit Buttons */}
         <div className="flex gap-3 pt-4">
-          <PrimaryButton content="Submit Request" onClick={() => {}} />
+          <button className='primary-btn' type="submit">
+            Leave Request
+          </button>
           <button
             type="button"
             onClick={onClose}
@@ -129,6 +144,21 @@ const LeaveRequestForm = ({ onClose }) => {
             Cancel
           </button>
         </div>
+
+        {
+          state?.error?.form_error && (
+            <p className="error-message">{state.error.form_error}</p>
+          )
+        }
+
+        {
+          state?.success && (
+            <p className="bg-green-100 text-green-700 text-sm mt-2 px-4 h-[46px] flex items-center rounded-md">
+              {state.message}
+            </p>
+          )
+        }
+        
       </form>
     </div>
   );

@@ -13,8 +13,11 @@ const Time = () => {
         second: 'numeric',
         hour12: true,
     }).format(now)
-    
+
   return (
+
+    !now ? <div>--:--:--</div> :
+    
     <div>
         <p>{structuredTime}</p>
     </div>

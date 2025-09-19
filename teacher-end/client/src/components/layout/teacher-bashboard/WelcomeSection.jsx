@@ -12,7 +12,7 @@ const WelcomeSection = () => {
         </Title>
       </div>
 
-      <div className='flex flex-col items-start md:items-end justify-center space-y-2'>
+      <div className='flex flex-col items-start md:items-end justify-center space-y-1'>
         <Date />
         <Time />
       </div>
