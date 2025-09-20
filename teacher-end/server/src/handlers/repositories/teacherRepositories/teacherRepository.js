@@ -1,5 +1,21 @@
 import { db } from "../../../config/supabase.js";
 
+export async function repoGetAllTeachers() {
+    return await db.from("teacher").select("*");
+}
+
+export async function repoGetTeacherByNic(nic) {
+    return await db.from("teacher").select("*").eq("teacher_nic", nic);
+}
+
+export async function repoFindByNic(nic) {
+    return await db.from("teacher").select("teacher_nic").eq("teacher_nic", nic).limit(1);
+}
+
+export async function repoInsertTeacher(row) {
+    return await db.from("teacher").insert([row]).select("*").single();
+}
+
 export async function getTeacherByEmail(email) {
     const { data: teacher, error } = await db
         .from('teacher')

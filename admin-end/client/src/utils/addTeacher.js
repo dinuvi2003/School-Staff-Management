@@ -1,26 +1,22 @@
 // Direct calls to your backend (no Next.js /api route)
 import axios from "axios";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000"; // change if needed
-  const token = 12345677;
+// utils/addTeacher.js
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000";
 
-// JSON version (no file upload)
 export async function addTeacher(payload) {
-  try {
-    const { data } = await axios.post(`${API_BASE}/api/teacher/add-new`, payload, {
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-     },
-      timeout: 15000,
-      withCredentials: false, // set true if your backend uses cookies
-    });
-    return { success: true, data };
-  } catch (err) {
-    const message = err?.response?.data?.message || err.message || "Unexpected error";
-    return { success: false, message };
+  const res = await fetch(`${API_BASE}/api/teacher/add-new`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",              // <-- send cookies
+    body: JSON.stringify(payload),
+  });
+
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(json?.errors?.message || json?.message || "Failed to add teacher");
   }
+  return { success: true, data: json?.data };
 }
 
 // Multipart version (when you actually want to upload the image file)

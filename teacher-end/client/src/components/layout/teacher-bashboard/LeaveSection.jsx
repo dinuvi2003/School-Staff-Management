@@ -1,34 +1,52 @@
 'use client'
 
 import SectionTitle from '@/components/ui/Titles/SectionTitle'
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { LeaveCard } from './LeaveCard'
 import PrimaryButton from '@/components/ui/Button/PrimaryButton'
 import Popup from '@/components/layout/popup/Popup'
 import LeaveRequestForm from '@/components/layout/popup/LeaveRequestForm'
 import PendingLeaveDetails from './PendingLeaveDetails'
+import { useUser } from '@/app/hooks/useUser'
+import { Router } from 'next/router'
+import { Route } from 'lucide'
 
 const LeaveSection = () => {
+  const { user, loading } = useUser();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [totalLeavesRequests, setTotalLeavesRequests] = useState(0);
   const [pendingLeaveRequests, setPendingLeaveRequests] = useState(0);
   const [rejectedLeaveRequests, setRejectedLeaveRequests] = useState(0);
-
   const [isPending, setIsPending] = useState(true);
 
-  // hard coded teacher nic
-  const teacher_nic = "NIC123456V";
-  
   useEffect(() => {
 
+    if (!user?.nic) return;
+    console.log("Teacher NIC", user?.nic);
+    if (user.nic) {
+      const teacher_nic = user.nic;
+    }
     const fetchLeaveData = async () => {
-      const teacherAllLeavesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave/teacher/${teacher_nic}`)
+
+      const teacherAllLeavesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${user?.nic}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
       const teacherAllLeavesData = await teacherAllLeavesResponse.json();
 
-      const pendingLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave/teacher/${teacher_nic}/pending`)
+      const pendingLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${teacher_nic}/pending`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
       const pendingLeaveData = await pendingLeaveResponse.json();
 
-      const rejectedLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave/teacher/${teacher_nic}/rejected`)
+      const rejectedLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${teacher_nic}/rejected`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
       const rejectedLeaveData = await rejectedLeaveResponse.json();
 
       setTotalLeavesRequests(teacherAllLeavesData.leaves);
@@ -37,7 +55,8 @@ const LeaveSection = () => {
     }
 
     fetchLeaveData();
-  }, [teacher_nic]);
+
+  }, [user?.nic]);
 
   const newLeaveRequest = () => {
     setIsPopupOpen(true);
@@ -46,6 +65,16 @@ const LeaveSection = () => {
   const closePopup = () => {
     setIsPopupOpen(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="p-6 bg-white rounded shadow text-center">
+          <p className="text-gray-700">loading...</p>
+        </div>
+      </div>
+    )
+  }
 
 
   return (
@@ -73,7 +102,7 @@ const LeaveSection = () => {
 
       {/* pending leave request details */}
       <PendingLeaveDetails />
-      
+
     </div>
   );
 }

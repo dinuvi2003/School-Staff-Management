@@ -1,63 +1,67 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../context/AuthContext';
+import { useState } from 'react';
 
-export default function LoginForm() {
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000';
+const LANDING = process.env.NEXT_PUBLIC_LANDING_URL || 'http://localhost:5000/api/auth/landing';
 
-  const router = useRouter();
-  const { login } = useAuth();
-
-  const [nic, setNic] = useState('');
+export default function LoginPage() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState('');
+  const [error, setError] = useState('');
 
-
-  // temporaty handle
-  const handleLoginButtonTemp = () => {
-    router.replace('/teacher-dashboard');
-  }
-
-  async function onSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setErr('');
+    setError('');
     setLoading(true);
+    console.log(email, password)
     try {
-      const res = await login({ nic, password });
-      if (!res?.ok) {
-        setErr(res?.error || 'Login failed');
-        return;
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password })
+      });
+      const json = await res.json();
+      if (!res.ok || !json?.ok) {
+        throw new Error(json?.errors?.message || 'Login failed');
       }
-      router.replace('/');
-    } catch (e) {
-      setErr(e?.message || 'Login failed');
-    } finally {
+
+      // Let the server redirect based on role (ADMIN -> 3001, TEACHER -> 3000)
+      window.location.href = LANDING;
+    } catch (err) {
+      setError(err?.message || 'Login failed');
       setLoading(false);
     }
   }
 
   return (
     <section className="mx-auto mt-10 w-full max-w-[400px] rounded-2xl bg-white p-8 shadow min-h-[300px]">
+      {error ? (
+        <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {error}
+        </div>
+      ) : null}
       <h2 className="mb-6 text-center text-lg font-semibold">Staff Login</h2>
 
       <form className="space-y-6">
         <div>
-          <label htmlFor="nic" className="mb-1 block text-sm font-medium text-gray-700">
-            NIC
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+            Email
           </label>
           <input
-            id="nic"
-            name="nic"
-            type="text"
-            placeholder="Enter your NIC"
+            id="email"
+            name="email"
+            type="email"
+            inputMode='email'
+            autoComplete='email'
+            placeholder="Enter your email"
             className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-gray-400"
-            autoComplete="username"
             required
-            value={nic}
-            onChange={(e) => setNic(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -69,7 +73,7 @@ export default function LoginForm() {
             <input
               id="password"
               name="password"
-              type={passwordVisible ? "text" : "password"}
+              type={showPw ? "text" : "password"}
               placeholder="Enter your password"
               className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 pr-10 text-sm outline-none focus:border-gray-400"
               autoComplete="current-password"
@@ -79,12 +83,12 @@ export default function LoginForm() {
             />
             <button
               type="button"
-              onClick={() => setPasswordVisible((v) => !v)}
+              onClick={() => setShowPw((v) => !v)}
               className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
-              aria-label={passwordVisible ? "Hide password" : "Show password"}
-              title={passwordVisible ? 'Hide password' : 'Show password'}
+              aria-label={showPw ? "Hide password" : "Show password"}
+              title={showPw ? 'Hide password' : 'Show password'}
             >
-              {passwordVisible ? (
+              {showPw ? (
                 // eye-off
                 <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7">
                   <path d="M3 3l18 18" />
@@ -105,8 +109,8 @@ export default function LoginForm() {
 
         <button
           type="button"
-          onClick={handleLoginButtonTemp}
           disabled={loading}
+          onClick={handleSubmit}
           className="w-full rounded-md bg-[#1E56C5] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
         >
           {loading ? 'Signing in…' : 'Login'}

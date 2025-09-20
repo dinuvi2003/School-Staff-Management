@@ -1,39 +1,55 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { api } from '@/lib/apiClient';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export default function DetailsTable () {
 
+export default function DetailsTable() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    const fetchTeachers = async () => {
+    (async () => {
       try {
-        const res = await api.get('/api/teachers'); 
-        setRows(res.data?.data || []);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE}/api/teacher`,
+          { method: 'GET', credentials: 'include' }
+        );
+        const json = await res.json();
+        if (!res.ok) {
+          throw new Error(json?.errors?.message || 'Failed to fetch teacher details');
+        }
+
+        console.log("teacher", json?.data?.teachers)
+        // API shape: { ok, message, data: { teachers: [...] } }
+        setRows(json?.data?.teachers || []);
       } catch (e) {
-        setErr(e?.response?.data?.message || 'Failed to fetch teacher details');
+        setErr(e?.message || 'Failed to fetch teacher details');
       } finally {
         setLoading(false);
       }
-    };
-    fetchTeachers();
+    })();
   }, []);
 
-  const handleDelete = async (id) => {
+  async function handleDelete(user_id) {
     if (!confirm('Are you sure you want to delete this teacher?')) return;
-
     try {
-      await api.delete(`/api/teachers/${id}`);
-      setRows((prev) => prev.filter((row) => row.id !== id));
+      // TODO: replace with your real delete endpoint
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/teacher/${encodeURIComponent(user_id)}`,
+        { method: 'DELETE', credentials: 'include' }
+      );
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j?.errors?.message || 'Failed to delete teacher');
+      }
+      setRows(prev => prev.filter(r => r.user_id !== user_id));
     } catch (e) {
-      alert(e?.response?.data?.message || 'Failed to delete teacher');
+      alert(e.message || 'Failed to delete teacher');
     }
-  };
+  }
 
   return (
     <section className="mx-auto max-w-6xl px-4">
@@ -88,48 +104,48 @@ export default function DetailsTable () {
         ) : err ? (
           <p className="p-6 text-center text-red-600">{err}</p>
         ) : (
-        <table className="min-w-full text-sm">
-          <thead className="bg-indigo-50/60 text-gray-700">
-            <tr>
-              <Th>Teacher Name</Th>
-              <Th>NIC</Th>
-              <Th>Service Type</Th>
-              <Th>Grade</Th>
-              <Th center>Actions</Th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.length > 0 ? (
-              rows.map((r, idx) => (
-                <tr key={r.id ?? idx} className={idx % 2 ? "bg-white" : "bg-gray-50/30"}>
-                  <Td>{r.name}</Td>
-                  <Td>{r.nic}</Td>
-                  <Td>{r.serviceType}</Td>
-                  <Td>{r.grade}</Td>
-                  <Td center>
-                    <div className="flex items-center justify-center gap-2">
-                      <GhostIcon title="View" onClick={() => router.push(`/TeacherDetails/${r.id}`)}>👁️</GhostIcon>
-                      <GhostIcon title="Edit">✏️</GhostIcon>
-                      <GhostIcon title="Delete" onClick={() => handleDelete(r.id)}>🗑️</GhostIcon>
-                    </div>
-                  </Td>
-                </tr>
-              ))
-            ) : (
+          <table className="min-w-full text-sm">
+            <thead className="bg-indigo-50/60 text-gray-700">
               <tr>
-                <td colSpan={5} className="p-8 text-center text-gray-500">
-                  No data yet.
-                </td>
+                <Th>Teacher Name</Th>
+                <Th>NIC</Th>
+                <Th>Service Type</Th>
+                <Th>Grade</Th>
+                <Th center>Actions</Th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {rows.length > 0 ? (
+                rows.map((r, idx) => (
+                  <tr key={r.id ?? idx} className={idx % 2 ? "bg-white" : "bg-gray-50/30"}>
+                    <Td>{r.teacher_full_name}</Td>
+                    <Td>{r.teacher_nic}</Td>
+                    <Td>{r.service_type}</Td>
+                    <Td>{r.teacher_grade}</Td>
+                    <Td center>
+                      <div className="flex items-center justify-center gap-2">
+                        <Link href={`TeacherDetailsSinglePage/${r.teacher_nic}`}><GhostIcon title="View" >👁️</GhostIcon></Link>
+                        <GhostIcon title="Edit">✏️</GhostIcon>
+                        <GhostIcon title="Delete" onClick={() => handleDelete(r.techer_nic)}>🗑️</GhostIcon>
+                      </div>
+                    </Td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-500">
+                    No data yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         )}
       </div>
 
-      
-    </section>
+
+    </section >
   );
 }
 
@@ -150,4 +166,3 @@ function GhostIcon({ children }) {
     </span>
   );
 }
-  

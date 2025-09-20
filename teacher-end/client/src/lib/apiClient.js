@@ -1,10 +1,14 @@
-import axios from "axios";
+export async function getCurrentUser() {
+  const res = await fetch("http://localhost:5000/api/me", {
+    method: "GET",
+    credentials: "include",
+  });
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"; // backend server
+  if (!res.ok) {
+    throw new Error("Not authenticated");
+  }
 
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true, // include cookies for refresh token if you use them
-  headers: { "Content-Type": "application/json" },
-});
+  const { data } = await res.json();
+  console.log("data", data);
+  return data;
+}

@@ -1,16 +1,27 @@
-import { Router } from 'express'
-const router = Router()
-import { getAllLeaves, getSingleLeaveDetails, approveLeaveStatus, rejectLeaveStatus, cancleLeaveStatus, getLeavesByTeacherId, getPendingLeavesByTeacherId, getRejectLeavesByTeacherId } from "../controller/leave.controller.js"
+import { Router } from "express";
+import {
+    getAllLeaves,
+    getSingleLeaveDetails,
+    approveLeaveStatus,
+    rejectLeaveStatus,
+    cancelLeaveStatus,
+    getLeavesByTeacherId,
+    getPendingLeavesByTeacherId,
+    getRejectLeavesByTeacherId,
+} from "../handlers/controllers/leaveControllers/leaveController.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 
-router.get("/", getAllLeaves)
-router.get("/:id", getSingleLeaveDetails)
+const router = Router();
 
-router.get("/teacher/:id", getLeavesByTeacherId)
-router.get("/teacher/:id/pending", getPendingLeavesByTeacherId)
-router.get("/teacher/:id/rejected", getRejectLeavesByTeacherId)
+router.get("/", requireAuth, requireRole('ADMIN'), getAllLeaves);
+router.get("/:id", requireAuth, requireRole('ADMIN'), getSingleLeaveDetails);
 
-router.patch("/:id/approve", approveLeaveStatus)
-router.patch("/:id/reject", rejectLeaveStatus)
-router.patch("/:id/cancel", cancleLeaveStatus)
+router.get("/teacher/:id", requireAuth, requireRole('ADMIN'), getLeavesByTeacherId);
+router.get("/teacher/:id/pending", requireAuth, requireRole('ADMIN'), getPendingLeavesByTeacherId);
+router.get("/teacher/:id/rejected", requireAuth, requireRole('ADMIN'), getRejectLeavesByTeacherId);
 
-export default router
+router.patch("/:id/approve", requireAuth, requireRole('ADMIN'), approveLeaveStatus);
+router.patch("/:id/reject", requireAuth, requireRole('ADMIN'), rejectLeaveStatus);
+router.patch("/:id/cancel", requireAuth, requireRole('ADMIN'), cancelLeaveStatus);
+
+export default router;
