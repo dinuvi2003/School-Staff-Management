@@ -1,11 +1,10 @@
-const dotenv = require('dotenv')
+import app from "./src/app.js"
+import { config } from 'dotenv'
 
 // env variables
-dotenv.config()
+config()
 const PORT = process.env.PORT || 3000
 
-const app = require("./src/app")
-
 app.listen(PORT, () => {
-    console.log(`bakend is listning in port ${PORT}`)
+    console.log(`backend is listening on port ${PORT}`)
 })

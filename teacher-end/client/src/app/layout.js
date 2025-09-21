@@ -1,6 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -21,7 +19,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className={`${poppins.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   );

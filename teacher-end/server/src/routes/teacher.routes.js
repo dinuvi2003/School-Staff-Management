@@ -1,21 +1,16 @@
-const express = require('express')
+// routes/teacher.routes.js
+import { Router } from "express";
+import {
+  getAllTeachers,
+  getSingleTeacherDetails,
+  addNewTeacher,
+} from "../handlers/controllers/teacherControllers/teacherController.js";
+import { requireAuth, requireRole } from "../middleware/auth.js";
 
-const router = express.Router()
-const teacherController = require("../controller/techer.controller")
+const router = Router();
 
-const API_TOKEN = process.env.API_TOKEN || "12345677";
-function authGuard(req, res, next) {
-  const header = req.headers.authorization || "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  if (token !== API_TOKEN) {
-    return res.status(401).json({ ok: false, message: "Unauthorized" });
-  }
-  next();
-}
+router.get("/", requireAuth, requireRole('ADMIN'), getAllTeachers);
+router.get("/:id", requireAuth, requireRole('ADMIN'), getSingleTeacherDetails);
+router.post("/add-new", requireAuth, requireRole('ADMIN'), addNewTeacher);
 
-router.get("/", teacherController.getAllTeachers)
-router.get("/:id", teacherController.getSingleTeacherDetails)
-
-router.post("/add-new", authGuard, teacherController.addNewTeacher);
-
-module.exports = router
+export default router;
