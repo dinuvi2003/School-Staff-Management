@@ -43,3 +43,11 @@ label{
 .background-glow{
   background-image: radial-gradient(closest-side, rgba(255, 255, 255, 0.15), transparent);
 }
+
+.primary-btn{
+  @apply bg-primary text-white cursor-pointer font-medium text-sm h-[46px] px-6 rounded-md hover:opacity-90 transition duration-200 ;
+}
+
+.error-message {
+  @apply bg-red-100 text-red-700 text-sm mt-2 px-4 h-[46px] flex items-center rounded-md;
+}

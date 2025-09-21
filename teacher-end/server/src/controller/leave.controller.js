@@ -264,3 +264,49 @@ export async function getRejectLeavesByTeacherId(req, res) {
     }), 400
 }
 
+
+exports.createNewLeave = async (req, res) => {
+
+    // If using express.json() middleware, req.body is already parsed
+    const body = req.body;
+    console.log("Received leave form data:", body);
+    console.log("processing")
+
+    if (!body.teacher_id || !body.leave_type || !body.leave_date || !body.arrival_date) {
+        return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    console.log("processing")
+    try {
+
+        const { data, error } = await supabase_client
+            .from('leave')
+            .insert([
+                {
+                    teacher_nic: body["teacher_id"],
+                    leave_type: body["leave_type"],
+                    leave_date: body["leave_date"],
+                    arrival_date: body["arrival_date"],
+                    leave_day_count: body["leave_day_count"]
+                },
+            ])
+            .select()
+
+        console.log(data)
+
+        if (error) {
+            console.log(error)
+            throw new Error(error)
+        }
+
+        return res.status(201).json({
+            message: "Successfully requested the leave.",
+        });
+
+    }
+    catch (error) {
+        console.log("processing error")
+        return res.status(500).json({ message: "Server error.", error });
+    }
+
+}
