@@ -1,21 +1,21 @@
 'use client'
 
-import { hookNow } from '@/app/hooks/hookNow'
+import { hookNow } from '@/hooks/hookNow'
 import React from 'react'
 
 const Date = () => {
 
-    const now = hookNow()
+  const now = hookNow()
 
-    const structuredDate = new Intl.DateTimeFormat(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }).format(now)
+  const structuredDate = new Intl.DateTimeFormat(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(now)
 
   return (
     <div>
-        <p>{structuredDate}</p>
+      <p>{structuredDate}</p>
     </div>
   )
 }

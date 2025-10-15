@@ -7,7 +7,7 @@ import PrimaryButton from '@/components/ui/Button/PrimaryButton'
 import Popup from '@/components/layout/popup/Popup'
 import LeaveRequestForm from '@/components/layout/popup/LeaveRequestForm'
 import PendingLeaveDetails from './PendingLeaveDetails'
-import { useUser } from '@/app/hooks/useUser'
+import { useUser } from '@/hooks/useUser'
 import { MdOutlinePendingActions } from "react-icons/md";
 import { IoCalendarOutline } from "react-icons/io5";
 import { TbCalendarCancel } from "react-icons/tb";
