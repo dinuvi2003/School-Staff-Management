@@ -1,6 +1,6 @@
 'use client'
 
-import { useUser } from '@/app/hooks/useUser'
+import { useUser } from '@/hooks/useUser'
 import SectionTitle from '@/components/ui/Titles/SectionTitle'
 import React, { useEffect, useState } from 'react'
 

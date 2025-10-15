@@ -5,6 +5,8 @@ import { ucListTeachers, ucGetTeacher, ucAddTeacher } from "../../usecases/teach
 // GET /api/teacher
 export async function getAllTeachers(req, res) {
     const { data, error, status, detail } = await ucListTeachers();
+
+    console.log("Teachers fetched:", data);
     if (error) return fail(res, error, status || 400, detail ? { detail } : {});
     return ok(res, { teachers: data }, "OK");
 }

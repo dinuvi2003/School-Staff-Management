@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../../lib/apiClient";
+import { getCurrentUser } from "../lib/apiClient";
 
 export function useUser() {
     const [user, setUser] = useState(null);
