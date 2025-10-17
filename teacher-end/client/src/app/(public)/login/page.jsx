@@ -4,7 +4,7 @@ import LoginForm from "../../../components/layout/LoginPage/LoginForm";
 
 export default function Home() {
   return (
-    <main className="flex items-center justify-center ">
+    <main className="flex items-center bg-blue-50/40 h-screen justify-center ">
       <div className=" p-5 mx-4 w-full max-w-5xl">
         <LoginHeader />
         <div className="p-10">

@@ -59,10 +59,11 @@ export const LeaveFormHandlingAction = async (initialState, formData) => {
 
 
     // update the form object with the calculated day count
-    formDataObj.leave_day_count = dayCount;
+    formDataObj.days_count = dayCount;
+    console.log("Processed Leave Form Data: ", formDataObj);
 
     // send the data to the backend
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leave`, {
+    const response = await fetch(`${process.env.API_BASE}/api/leave/new-leave`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -70,6 +71,8 @@ export const LeaveFormHandlingAction = async (initialState, formData) => {
         body: JSON.stringify(formDataObj)
     });
 
+    console.log("Leave Form Action Response: ", response);
+    
     if (!response.ok) {
         return {
             success: false,
