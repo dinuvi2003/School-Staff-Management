@@ -124,9 +124,11 @@ export default function PendingLeaveRequests() {
                     className="p-2 border border-gray-300 text-black rounded-md"
                 >
                     <option value="All">All Leave Types</option>
-                    <option value="CASUAL">Casual</option>
-                    <option value="SICK">Sick</option>
-                    <option value="ANNUAL">Annual</option>
+                    <option value="casual">Casual</option>
+                    <option value="sick">Sick</option>
+                    <option value="duty leaves">Annual</option>
+                    <option value="leaves as a father">Leaves as a father</option>
+                    <option value="duty leaves">Duty Leaves</option>
                     {/* Add more types as per your API data */}
                 </select>
                 <select
@@ -223,6 +225,6 @@ export default function PendingLeaveRequests() {
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
