@@ -5,7 +5,7 @@ import React from 'react'
 export default function AdminNav({ active = "teachers", onChange }) {
   const tabs = [
     { key: "teachers", label: "Teacher Details", url: "/admin-dashboard" },
-    { key: "leave", label: "Leave Requests", url: "#" },
+    { key: "leave", label: "Leave Requests", url: "/all-leaves" },
     { key: "transfers", label: "Transfers & Promotions", url: "#" },
     { key: "new-teacher", label: "Add Teacher", url: "/AddTeacher" },
   ];

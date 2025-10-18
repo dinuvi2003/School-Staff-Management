@@ -20,13 +20,17 @@ export default function DetailsTable() {
   const [searchDeb, setSearchDeb] = useState('');
   const [deletingId, setDeletingId] = useState(null); 
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowPerPage = 10;
+
+  const indexOfLastRow = currentPage * rowPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowPerPage;
+  const PaginationRow = rows.slice(indexOfFirstRow, indexOfLastRow);
+  const totalpage = Math.ceil(rows.length / rowPerPage);
 
   useEffect(() => {
-    const id = setTimeout(() => setSearchDeb(search), 200); 
-    return () => clearTimeout(id);                           
-  }, [search]);  
 
-  useEffect(() => {
+    console.log("pagination", PaginationRow);
     (async () => {
       try {
         const res = await fetch(
@@ -215,67 +219,86 @@ export default function DetailsTable() {
       
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border bg-white">
-        {loading ? (
-          <p className="p-6 text-center">Loading...</p>
-        ) : err ? (
-          <p className="p-6 text-center text-red-600">{err}</p>
-        ) : (
-          <table className="min-w-full text-sm">
-            <thead className="bg-indigo-50/60 text-gray-700">
-              <tr>
-                <Th>Teacher Name</Th>
-                <Th>NIC</Th>
-                <Th>Service Type</Th>
-                <Th>Grade</Th>
-                <Th center>Actions</Th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredRows.length > 0 ? (
-                filteredRows.map((r, idx) => {
-                  const idKey = r.user_id ?? r.teacher_nic;          
-                  const isDeleting = deletingId === idKey;            
-                  return (
-                  <tr
-                    key={r.id ?? r.teacher_nic ?? idx}
-                    className={idx % 2 ? 'bg-white' : 'bg-gray-50/30'}
-                  >
-                    <Td>{r.teacher_full_name}</Td>
-                    <Td>{r.teacher_nic}</Td>
-                    <Td>{r.service_type}</Td>
-                    <Td>{r.teacher_grade}</Td>
-                    <Td center>
-                      <div className="flex items-center justify-center gap-2">
-                        <Link href={`TeacherDetailsSinglePage/${r.teacher_nic}`}>
-                          <GhostIcon title="View">👁️</GhostIcon>
-                        </Link>
-                        <GhostIcon title="Edit">✏️</GhostIcon>
-                        <GhostIcon
-                          title={isDeleting ? 'Deleting…' : 'Delete'}
-                          onClick={() => handleDelete(idKey)}
-                          disabled={isDeleting}
-                        >
-                          {isDeleting ? '⏳' : '🗑️'}
-                        </GhostIcon>
-                      </div>
-                    </Td>
-                  </tr>
-                )})
-              ) : (
+      <div className="overflow-x-auto" >
+        <div className=" rounded-lg border bg-white">
+          {loading ? (
+            <p className="p-6 text-center">Loading...</p>
+          ) : err ? (
+            <p className="p-6 text-center text-red-600">{err}</p>
+          ) : (
+            <table className="min-w-full text-sm">
+              <thead className="bg-indigo-50/60 text-gray-700">
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">
-                    No data matches your filters.
-                  </td>
+                  <Th>Teacher Name</Th>
+                  <Th>NIC</Th>
+                  <Th>Service Type</Th>
+                  <Th>Grade</Th>
+                  <Th center>Actions</Th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {PaginationRow.length > 0 ? (
+                  PaginationRow.map((r, idx) => (
+                    <tr key={r.id ?? idx} className={idx % 2 ? "bg-white" : "bg-gray-50/30"}>
+                      <Td>{r.teacher_full_name}</Td>
+                      <Td>{r.teacher_nic}</Td>
+                      <Td>{r.service_type}</Td>
+                      <Td>{r.teacher_grade}</Td>
+                      <Td center>
+                        <div className="flex items-center justify-center gap-2">
+                          <Link href={`TeacherDetailsSinglePage/${r.teacher_nic}`}><GhostIcon title="View" >👁️</GhostIcon></Link>
+                          <GhostIcon title="Edit">✏️</GhostIcon>
+                          <GhostIcon title="Delete" onClick={() => handleDelete(r.techer_nic)}>🗑️</GhostIcon>
+                        </div>
+                      </Td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                      No data yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+
+          )}
+
+        </div>
+
+        {loading || err ? null : PaginationRow.length > 0 && (
+          <div className="flex justify-center mt-4">
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+
+            {Array.from({ length: totalpage }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-md mx-1 ${currentPage === page ? ' bg-blue-600  text-white' : ' bg-gray-200  text-gray-700'}`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalpage}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
         )}
+
       </div>
-
-
     </section >
   );
 }

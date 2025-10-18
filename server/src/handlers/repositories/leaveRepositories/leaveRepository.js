@@ -2,11 +2,15 @@ import { db } from "../../../config/supabase.js";
 
 // basic reads
 export async function repoGetAllLeaves() {
-    return await db.from("leave").select("*");
+    return await db.from("leave_with_teacher").select("*");
 }
 
 export async function repoGetLeaveById(leave_id) {
     return await db.from("leave").select("*").eq("leave_id", leave_id).single();
+}
+
+export async function repoGetLeaveByIdWithTeacher(leave_id) {
+    return await db.from("leave_with_teacher").select("*").eq("leave_id", leave_id).single();
 }
 
 export async function repoGetLeavesByTeacher(teacher_id) {
@@ -18,6 +22,7 @@ export async function repoGetLeavesByTeacherAndStatus(teacher_id, status) {
         .from("leave")
         .select("*")
         .eq("teacher_id", teacher_id)
+        .eq("teacher_id", teacher_nic)
         .eq("leave_status", status);
 }
 
@@ -46,5 +51,12 @@ export async function repoCreateNewLeave(teacher_id, leave_type, leave_date, arr
             }
         ])
         .select("*")
+        .single();
+}
+export async function repoGetLeaveHistoryByTeacher(teacher_id) {
+    return await db
+        .from("teacher_leave_summary")
+        .select("*")
+        .eq("teacher_user_id", teacher_id)
         .single();
 }

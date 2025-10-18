@@ -2,6 +2,8 @@ import {
     repoCreateNewLeave,
     repoGetAllLeaves,
     repoGetLeaveById,
+    repoGetLeaveByIdWithTeacher,
+    repoGetLeaveHistoryByTeacher,
     repoGetLeavesByTeacher,
     repoGetLeavesByTeacherAndStatus,
     repoUpdateLeaveStatus,
@@ -24,6 +26,12 @@ export async function ucListLeaves() {
 
 export async function ucGetLeave(leave_id) {
     const { data, error } = await repoGetLeaveById(leave_id);
+    if (error) return { error: "Leave not found", status: 404, detail: error.message };
+    return { data };
+}
+
+export async function ucGetLeaveWithTeacher(leave_id) {
+    const { data, error } = await repoGetLeaveByIdWithTeacher(leave_id);
     if (error) return { error: "Leave not found", status: 404, detail: error.message };
     return { data };
 }
@@ -81,4 +89,15 @@ export async function ucCreateNewLeave(teacher_id, leave_type, leave_date, arriv
     const { data, error } = await repoCreateNewLeave(teacher_id, leave_type, leave_date, arrival_date, days_count);
     if (error) return { error: "Failed to create new leave", status: 400, detail: error.message };
     return { data };
+
+}
+
+// leave history
+export async function leaveHistoryByTeacher(teacher_id) {
+    const { data, error } = await repoGetLeaveHistoryByTeacher(teacher_id);
+    console.log("History usecase", data)
+    if (error) return { error: "Failed to fetch leave history", status: 400, detail: error.message };
+    if (!data || data.length === 0) return { error: "No leave history found", status: 404 };
+    return { data };
+
 }

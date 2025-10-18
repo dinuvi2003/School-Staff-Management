@@ -77,5 +77,7 @@ export const config = {
         '/admin-dashboard/:path*',
         '/TeacherDetailsSinglePage/:path*',
         '/AddTeacher',
+        '/all-leaves',
+        '/all-leaves/:path*'
     ],
 };
