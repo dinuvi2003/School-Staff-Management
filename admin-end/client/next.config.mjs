@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 
-    mages: {
+    images: {
         // Simple allow-list
         domains: ['example.com', 'vueseoefnkrmahcrbivf.supabase.co'], // add any you use
         // OR use remotePatterns for finer control:

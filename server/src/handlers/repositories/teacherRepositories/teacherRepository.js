@@ -16,6 +16,14 @@ export async function repoInsertTeacher(row) {
     return await db.from("teacher").insert([row]).select("*").single();
 }
 
+export async function repoDeleteTeacherByUserIdOrNic(id) {
+  return await db
+    .from("teacher")
+    .delete()
+    .or(`user_id.eq.${id},teacher_nic.eq.${id}`)
+    .select("*"); 
+}
+
 export async function getTeacherByEmail(email) {
     const { data, error } = await db
         .from('teacher')

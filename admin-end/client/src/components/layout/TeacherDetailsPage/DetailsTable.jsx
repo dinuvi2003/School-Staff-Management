@@ -1,13 +1,24 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
+function norm(v) {                                   
+  return String(v ?? '').trim().toLowerCase();      
+}                                                    
+function normNic(v) {                                
+  return norm(v).replace(/[^a-z0-9]/g, '');          
+}                                                    
+ 
 export default function DetailsTable() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
+  const [serviceType, setServiceType] = useState('');
+  const [grade, setGrade] = useState('');   
+  const [search, setSearch] = useState('');
+  const [searchDeb, setSearchDeb] = useState('');
+  const [deletingId, setDeletingId] = useState(null); 
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const rowPerPage = 10;
@@ -42,21 +53,94 @@ export default function DetailsTable() {
     })();
   }, []);
 
-  async function handleDelete(user_id) {
-    if (!confirm('Are you sure you want to delete this teacher?')) return;
+  const tokens = useMemo(() => norm(searchDeb).split(/\s+/).filter(Boolean), [searchDeb]);
+
+  // const filteredRows = useMemo(() => {
+  //   const s = norm(search);
+  //   const st = norm(serviceType);
+  //   const gr = norm(grade);
+
+  //   return rows.filter((r) => {
+  //     const rService = norm(r.service_type);
+  //     const rGrade = norm(r.teacher_grade);
+
+  //     const matchService = st ? rService.includes(st) : true;
+  //     const matchGrade = gr ? rGrade.includes(gr) : true;
+  //     const matchSearch = s
+  //       ? [
+  //           r.teacher_full_name,
+  //           r.teacher_nic,
+  //           r.service_type,
+  //           r.teacher_grade,
+  //         ]
+  //           .filter(Boolean)
+  //           .some((v) => norm(v).includes(s))
+  //       : true;
+  //     return matchService && matchGrade && matchSearch;
+  //   });
+  // }, [rows, serviceType, grade, search]);
+
+  // function clearFilters() {
+  //   setServiceType('');
+  //   setGrade('');
+  //   setSearch('');
+  // }
+
+  const filteredRows = useMemo(() => {
+    const st = norm(serviceType);
+    const gr = norm(grade);
+
+    return rows.filter((r) => {
+      const rName = norm(r.teacher_full_name);
+      const rNic  = normNic(r.teacher_nic);
+      const rSvc  = norm(r.service_type);
+      const rGrd  = norm(r.teacher_grade);
+
+      const matchService = st ? rSvc.includes(st) : true;
+      const matchGrade   = gr ? rGrd.includes(gr) : true;
+
+      // 🆕 all tokens must appear somewhere (AND across tokens, OR across fields)
+      const matchTokens = tokens.length
+        ? tokens.every((t) => rName.includes(t) || rSvc.includes(t) || rGrd.includes(t) || rNic.includes(t))
+        : true;
+
+      return matchService && matchGrade && matchTokens;
+    });
+  }, [rows, serviceType, grade, tokens]); // 🟩
+
+  function clearFilters() {
+    setServiceType('');
+    setGrade('');
+    setSearch('');
+  }
+
+  async function handleDelete(idOrNic) {
+    const idToSend = idOrNic;
+    if (!idToSend) {
+      alert('Missing teacher identifier.');
+      return;
+    }
+    const teacher = rows.find(r => (r.user_id ?? r.teacher_nic) === idToSend);
+    const nameForConfirm = teacher?.teacher_full_name || idToSend;
+
+    if (!confirm(`Delete ${nameForConfirm}? This cannot be undone.`)) return;
+
     try {
-      // TODO: replace with your real delete endpoint
+      setDeletingId(idToSend);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/teacher/${encodeURIComponent(user_id)}`,
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/teacher/${encodeURIComponent(idToSend)}`,
         { method: 'DELETE', credentials: 'include' }
       );
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j?.errors?.message || 'Failed to delete teacher');
+        throw new Error(json?.message || json?.error || 'Failed to delete teacher');
       }
-      setRows(prev => prev.filter(r => r.user_id !== user_id));
+
+      setRows(prev => prev.filter(r => (r.user_id ?? r.teacher_nic) !== idToSend));
     } catch (e) {
       alert(e.message || 'Failed to delete teacher');
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -67,12 +151,13 @@ export default function DetailsTable() {
         <div className="relative">
           <select
             className="w-56 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-            defaultValue=""
             aria-label="Service Type"
+            value={serviceType}
+            onChange={(e) => setServiceType(e.target.value)}
           >
             <option value="">Service Type</option>
-            <option value="Principal Service">Principal Service</option>
-            <option value="Teacher Service">Teacher Service</option>
+            <option value="Principal">Principal</option>
+            <option value="Teacher">Teacher</option>
           </select>
         </div>
 
@@ -80,8 +165,9 @@ export default function DetailsTable() {
         <div className="relative">
           <select
             className="w-40 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-            defaultValue=""
             aria-label="Grade"
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
           >
             <option value="">Grade</option>
             <option value="3iA">3iA</option>
@@ -99,12 +185,38 @@ export default function DetailsTable() {
             placeholder="Search"
             className="w-56 rounded-md border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm"
             aria-label="Search"
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)}
           />
           <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">
             🔍
           </span>
+          {search && (
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setSearch('')} 
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          )}
         </div>
+
+        <button
+          type="button"
+          onClick={clearFilters}
+          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+        >
+          Clear
+        </button>
+
+        <span className="text-sm text-gray-500">
+          Showing {filteredRows.length} / {rows.length}
+        </span>
+      
       </div>
+      
 
       {/* Table */}
       <div className="overflow-x-auto" >
@@ -201,10 +313,18 @@ function Td({ children, center = false }) {
     <td className={`px-4 py-3 ${center ? "text-center" : "text-left"} text-gray-700`}>{children}</td>
   );
 }
-function GhostIcon({ children }) {
+function GhostIcon({ children, title, onClick, disabled }) {
   return (
-    <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-gray-600">
+    <button
+      type="button"
+      title={title}
+      onClick={onClick}
+      disabled={disabled}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-gray-600 
+                  ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+    >
       {children}
-    </span>
+    </button>
   );
 }
+

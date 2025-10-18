@@ -3,6 +3,7 @@ import {
     repoGetTeacherByNic,
     repoFindByNic,
     repoInsertTeacher,
+    repoDeleteTeacherByUserIdOrNic,
 } from "../../repositories/teacherRepositories/teacherRepository.js";
 
 // list
@@ -73,4 +74,15 @@ export async function ucAddTeacher(payload) {
     }
 
     return { data };
+}
+
+export async function ucDeleteTeacher(id) {
+  if (!id) return { error: "Missing teacher id (user_id or teacher_nic)", status: 400 };
+
+  const { data, error } = await repoDeleteTeacherByUserIdOrNic(id);
+
+  if (error) return { error: "Delete failed", status: 500, detail: error.message };
+  if (!data || data.length === 0) return { error: "Teacher not found", status: 404 };
+
+  return { data };
 }
