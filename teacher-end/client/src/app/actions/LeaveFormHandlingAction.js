@@ -63,7 +63,8 @@ export const LeaveFormHandlingAction = async (initialState, formData) => {
     console.log("Processed Leave Form Data: ", formDataObj);
 
     // send the data to the backend
-    const response = await fetch(`${process.env.API_BASE}/api/leave/new-leave`, {
+    const baseAPI = process.env.API_BASE || 'http://localhost:5000';
+    const response = await fetch(`${baseAPI}/api/leave/new-leave`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

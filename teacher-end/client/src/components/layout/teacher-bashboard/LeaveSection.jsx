@@ -7,6 +7,8 @@ import PrimaryButton from '@/components/ui/Button/PrimaryButton'
 import Popup from '@/components/layout/popup/Popup'
 import LeaveRequestForm from '@/components/layout/popup/LeaveRequestForm'
 import PendingLeaveDetails from './PendingLeaveDetails'
+import RejectedLeavesDetails from './RejectedLeavesDetails'
+import ApprovedLeavesDetails from './ApprovedLeavesDetails'
 import { MdOutlinePendingActions } from "react-icons/md";
 import { IoCalendarOutline } from "react-icons/io5";
 import { TbCalendarCancel } from "react-icons/tb";
@@ -43,7 +45,7 @@ const LeaveSection = () => {
       setLeavesError(null);
 
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE || '';
+        const base = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:5000';
         const res = await fetch(`${base}/api/leave/teacher/${currentUserId}`);
 
         if (!res.ok) {
@@ -75,7 +77,7 @@ const LeaveSection = () => {
   const availableLeaves = currentUser && currentUser.availableLeaves != null ? currentUser.availableLeaves : computedAvailable;
 
   return (
-    <div>
+    <div className='mb-20'>
       <div className="px-6 bg-blue-50/70 py-4 rounded-lg border-[1px] border-blue-200">
         <div className="flex items-center justify-between mb-4">
           <SectionTitle title="Leave Section" />
@@ -151,13 +153,16 @@ const LeaveSection = () => {
         </div>
 
         <Popup isOpen={isPopupOpen} onClose={closePopup}>
-          <LeaveRequestForm action={closePopup} />
+          <LeaveRequestForm onClose={closePopup} />
         </Popup>
       </div>
 
-  {/* pending leave request details */}
-  <PendingLeaveDetails pendingLeaves={leaves.filter(l => l.leave_status === 'PENDING')} />
-
+      {/* pending leave request details */}
+      <PendingLeaveDetails pendingLeaves={leaves.filter(l => l.leave_status === 'PENDING')} />
+      {/* approved leave request details */}
+      <ApprovedLeavesDetails approvedLeaves={leaves.filter(l => l.leave_status === 'APPROVED')} />
+      {/* rejected leave request details */}
+      <RejectedLeavesDetails rejectedLeaves={leaves.filter(l => l.leave_status === 'REJECTED' || l.leave_status === 'DENIED')} />
     </div>
   );
 }
