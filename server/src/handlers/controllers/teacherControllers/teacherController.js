@@ -1,6 +1,6 @@
 import { ok, fail } from "../../../services/utils/response.js";
 import { inviteUseCase } from "../../usecases/authUseCase/inviteUseCase.js";
-import { ucListTeachers, ucGetTeacher, ucAddTeacher } from "../../usecases/teacherUseCase/teacherUseCase.js";
+import { ucListTeachers, ucGetTeacher, ucAddTeacher, ucDeleteTeacher } from "../../usecases/teacherUseCase/teacherUseCase.js";
 
 // GET /api/teacher
 export async function getAllTeachers(req, res) {
@@ -31,4 +31,11 @@ export async function addNewTeacher(req, res) {
 
     if (emailError) return fail(res, emailError, emailStatus || 400);
     return ok(res, { teacher: data }, "Teacher created successfully", 201);
+}
+
+export async function deleteTeacher(req, res) {
+  const id = req.params.id;
+  const { data, error, status, detail } = await ucDeleteTeacher(id);
+  if (error) return fail(res, error, status || 400, detail ? { detail } : {});
+  return ok(res, { deleted: data }, "Teacher deleted successfully");
 }
