@@ -1,9 +1,8 @@
 "use client"
 
-import { useUser } from '@/app/hooks/useUser'
 import Date from '@/components/ui/Date'
-import Time from '@/components/ui/Time'
 import Title from '@/components/ui/Titles/Title'
+import { useUser } from '@/hooks/useUser'
 import React from 'react'
 
 const WelcomeSection = () => {

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useActionState } from 'react';
 import PrimaryButton from '@/components/ui/Button/PrimaryButton';
 import SectionTitle from '@/components/ui/Titles/SectionTitle';
 import { LeaveFormHandlingAction } from '@/app/actions/LeaveFormHandlingAction';
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/hooks/useUser';
 
 const initialState = {
   success : false,

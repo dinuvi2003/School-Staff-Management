@@ -14,7 +14,6 @@ import { MdOutlinePendingActions } from "react-icons/md";
 import { IoCalendarOutline } from "react-icons/io5";
 import { TbCalendarCancel } from "react-icons/tb";
 import { MdOutlineEventAvailable } from "react-icons/md";
-import { useUser } from '@/app/hooks/useUser'
 import { computeAvailableNormalLeaves } from '@/lib/leaveUtils'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'

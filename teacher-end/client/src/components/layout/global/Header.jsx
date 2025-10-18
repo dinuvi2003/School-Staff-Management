@@ -1,6 +1,6 @@
 "use client"
 
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/hooks/useUser';
 import React from 'react';
 
 const Header = () => {
@@ -44,19 +44,7 @@ const Header = () => {
             </div>
         </div>
 
-        {/* Account Holder Details */}
-        <div className="flex items-center gap-4 px-4 py-2">
-          <div className="flex flex-col items-end">
-            <span className="font-semibold text-base text-gray-900 leading-tight">{user?.name || 'Guest'}</span>
-            <span className="text-sm text-blue-700 font-medium">School Teacher</span>
-          </div>
-          {/* Profile Picture */}
-          <img
-            src="/teacher.png"
-            alt="Profile"
-            className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 shadow"
-          />
-        </div>
+
     </header>
   );
 };
