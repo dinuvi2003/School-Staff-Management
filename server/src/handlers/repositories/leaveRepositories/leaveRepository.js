@@ -22,7 +22,6 @@ export async function repoGetLeavesByTeacherAndStatus(teacher_id, status) {
         .from("leave")
         .select("*")
         .eq("teacher_id", teacher_id)
-        .eq("teacher_id", teacher_nic)
         .eq("leave_status", status);
 }
 
