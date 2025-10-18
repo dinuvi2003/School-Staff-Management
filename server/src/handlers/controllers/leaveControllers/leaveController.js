@@ -8,6 +8,7 @@ import {
     ucListLeavesByTeacher,
     ucListPendingByTeacher,
     ucListRejectedByTeacher,
+    ucCreateNewLeave,
 } from "../../usecases/leaveUseCase/leaveUseCase.js";
 
 // GET /api/leave
@@ -51,8 +52,8 @@ export async function cancelLeaveStatus(req, res) {
 
 // GET /api/leave/teacher/:id
 export async function getLeavesByTeacherId(req, res) {
-    const teacher_nic = req.params.id;
-    const { data, error, status, detail } = await ucListLeavesByTeacher(teacher_nic);
+    const teacher_id = req.params.id;
+    const { data, error, status, detail } = await ucListLeavesByTeacher(teacher_id);
     if (error) return fail(res, error, status || 400, detail ? { detail } : {});
     return ok(res, { leaves: data }, "OK");
 }
@@ -71,4 +72,13 @@ export async function getRejectLeavesByTeacherId(req, res) {
     const { data, error, status, detail } = await ucListRejectedByTeacher(teacher_nic);
     if (error) return fail(res, error, status || 400, detail ? { detail } : {});
     return ok(res, { leaves: data }, "OK");
+}
+
+
+// POST /api/leave/new-leave
+export async function createNewLeave(req, res) {
+    const { teacher_id, leave_type, leave_date, arrival_date, days_count } = req.body;
+    const { data, error, status, detail } = await ucCreateNewLeave(teacher_id, leave_type, leave_date, arrival_date, days_count);
+    if (error) return fail(res, error, status || 400, detail ? { detail } : {});
+    return ok(res, { leave: data }, "Leave created", 201);
 }

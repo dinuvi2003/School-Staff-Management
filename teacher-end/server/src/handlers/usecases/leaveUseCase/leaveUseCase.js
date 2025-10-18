@@ -74,3 +74,10 @@ export async function ucListRejectedByTeacher(teacher_nic) {
     if (!data || data.length === 0) return { error: "No rejected leaves", status: 404 };
     return { data };
 }
+
+export async function ucListApprovedByTeacher(teacher_nic) {
+    const { data, error } = await repoGetLeavesByTeacherAndStatus(teacher_nic, STATUS.APPROVED);
+    if (error) return { error: "Failed to fetch approved leaves", status: 400, detail: error.message };
+    if (!data || data.length === 0) return { error: "No approved leaves", status: 404 };
+    return { data };
+}

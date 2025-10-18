@@ -1,4 +1,5 @@
 import {
+    repoCreateNewLeave,
     repoGetAllLeaves,
     repoGetLeaveById,
     repoGetLeavesByTeacher,
@@ -54,23 +55,30 @@ export async function ucCancelLeave(leave_id) {
 }
 
 // teacher scoped
-export async function ucListLeavesByTeacher(teacher_nic) {
-    const { data, error } = await repoGetLeavesByTeacher(teacher_nic);
+export async function ucListLeavesByTeacher(teacher_id) {
+    const { data, error } = await repoGetLeavesByTeacher(teacher_id);
     if (error) return { error: "Failed to fetch leaves", status: 400, detail: error.message };
     if (!data || data.length === 0) return { error: "No leaves found", status: 404 };
     return { data };
 }
 
-export async function ucListPendingByTeacher(teacher_nic) {
-    const { data, error } = await repoGetLeavesByTeacherAndStatus(teacher_nic, STATUS.PENDING);
+export async function ucListPendingByTeacher(teacher_id) {
+    const { data, error } = await repoGetLeavesByTeacherAndStatus(teacher_id, STATUS.PENDING);
     if (error) return { error: "Failed to fetch pending leaves", status: 400, detail: error.message };
     if (!data || data.length === 0) return { error: "No pending leaves", status: 404 };
     return { data };
 }
 
-export async function ucListRejectedByTeacher(teacher_nic) {
-    const { data, error } = await repoGetLeavesByTeacherAndStatus(teacher_nic, STATUS.REJECTED);
+export async function ucListRejectedByTeacher(teacher_id) {
+    const { data, error } = await repoGetLeavesByTeacherAndStatus(teacher_id, STATUS.REJECTED);
     if (error) return { error: "Failed to fetch rejected leaves", status: 400, detail: error.message };
     if (!data || data.length === 0) return { error: "No rejected leaves", status: 404 };
+    return { data };
+}
+
+// create new leave
+export async function ucCreateNewLeave(teacher_id, leave_type, leave_date, arrival_date, days_count) {
+    const { data, error } = await repoCreateNewLeave(teacher_id, leave_type, leave_date, arrival_date, days_count);
+    if (error) return { error: "Failed to create new leave", status: 400, detail: error.message };
     return { data };
 }

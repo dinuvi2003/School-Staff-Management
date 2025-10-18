@@ -8,20 +8,23 @@ import {
     getLeavesByTeacherId,
     getPendingLeavesByTeacherId,
     getRejectLeavesByTeacherId,
+    createNewLeave,
 } from "../handlers/controllers/leaveControllers/leaveController.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 
 const leaveRouter = Router();
 
-leaveRouter.get("/", requireAuth, requireRole('ADMIN'), getAllLeaves);
-leaveRouter.get("/:id", requireAuth, getSingleLeaveDetails);
+leaveRouter.get("/", getAllLeaves);
+leaveRouter.get("/:id", getSingleLeaveDetails);
 
-leaveRouter.get("/teacher/:id", requireAuth, getLeavesByTeacherId);
-leaveRouter.get("/teacher/:id/pending", requireAuth, getPendingLeavesByTeacherId);
-leaveRouter.get("/teacher/:id/rejected", requireAuth, getRejectLeavesByTeacherId);
+leaveRouter.get("/teacher/:id", getLeavesByTeacherId);
+leaveRouter.get("/teacher/:id/pending", getPendingLeavesByTeacherId);
+leaveRouter.get("/teacher/:id/rejected", getRejectLeavesByTeacherId);
 
-leaveRouter.patch("/:id/approve", requireAuth, requireRole('ADMIN'), approveLeaveStatus);
-leaveRouter.patch("/:id/reject", requireAuth, requireRole('ADMIN'), rejectLeaveStatus);
-leaveRouter.patch("/:id/cancel", requireAuth, requireRole('ADMIN'), cancelLeaveStatus);
+leaveRouter.post("/new-leave", createNewLeave)
+
+leaveRouter.patch("/:id/approve", approveLeaveStatus);
+leaveRouter.patch("/:id/reject", rejectLeaveStatus);
+leaveRouter.patch("/:id/cancel", cancelLeaveStatus);
 
 export default leaveRouter;

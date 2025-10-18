@@ -5,22 +5,25 @@ import React from 'react'
 
 const Time = () => {
 
-  const now = hookNow()
+    const now = hookNow()
+  if (!now) return <div>--:--:--</div>
 
-  const structuredTime = new Intl.DateTimeFormat(undefined, {
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-  }).format(now)
+  // Manual deterministic time formatting (12-hour with am/pm)
+  const pad = (n) => n.toString().padStart(2, '0')
+
+  let hours = now.getHours()
+  const minutes = pad(now.getMinutes())
+  const seconds = pad(now.getSeconds())
+  const ampm = hours >= 12 ? 'pm' : 'am'
+  hours = hours % 12
+  if (hours === 0) hours = 12
+
+  const structuredTime = `${hours}:${minutes}:${seconds} ${ampm}`
 
   return (
-
-    !now ? <div>--:--:--</div> :
-
-      <div>
-        <p>{structuredTime}</p>
-      </div>
+    <div>
+      <p>{structuredTime}</p>
+    </div>
   )
 }
 

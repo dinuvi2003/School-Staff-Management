@@ -8,6 +8,7 @@ import {
     ucListLeavesByTeacher,
     ucListPendingByTeacher,
     ucListRejectedByTeacher,
+    ucListApprovedByTeacher,
 } from "../../usecases/leaveUseCase/leaveUseCase.js";
 
 // GET /api/leave
@@ -69,6 +70,14 @@ export async function getPendingLeavesByTeacherId(req, res) {
 export async function getRejectLeavesByTeacherId(req, res) {
     const teacher_nic = req.params.id;
     const { data, error, status, detail } = await ucListRejectedByTeacher(teacher_nic);
+    if (error) return fail(res, error, status || 400, detail ? { detail } : {});
+    return ok(res, { leaves: data }, "OK");
+}
+
+// GET /api/leave/teacher/:id/approved
+export async function getApprovedLeavesByTeacherId(req, res) {
+    const teacher_nic = req.params.id;
+    const { data, error, status, detail } = await ucListApprovedByTeacher(teacher_nic);
     if (error) return fail(res, error, status || 400, detail ? { detail } : {});
     return ok(res, { leaves: data }, "OK");
 }

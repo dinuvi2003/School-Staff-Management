@@ -1,7 +1,10 @@
+'use client'
+
 import React, { useState, useEffect, useActionState } from 'react';
 import PrimaryButton from '@/components/ui/Button/PrimaryButton';
 import SectionTitle from '@/components/ui/Titles/SectionTitle';
 import { LeaveFormHandlingAction } from '@/app/actions/LeaveFormHandlingAction';
+import { useUser } from '@/app/hooks/useUser';
 
 const initialState = {
   success : false,
@@ -11,6 +14,10 @@ const initialState = {
 
 
 const LeaveRequestForm = ({ onClose }) => {
+
+  const { user: currentUser, loading } = useUser();
+  const userId = currentUser ? currentUser.uid : '';
+  
   const [formData, setFormData] = useState({
     leave_date: '',
     arrival_date: '',
@@ -39,13 +46,18 @@ const LeaveRequestForm = ({ onClose }) => {
   };
 
   const [state, action, isLoading] = useActionState(LeaveFormHandlingAction, initialState);
-  const userId = "NIC123456V";
 
   return (
     <div className="w-full max-w-md mx-auto">
         <SectionTitle title="Apply for Leave" />
       
       <form action={action} className="space-y-4">
+
+        {/* hidden value for the teacher id */}
+        <div>
+          <input type="hidden" name="teacher_id" value={userId} />
+        </div>
+        
         {/* Leave Type */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -122,13 +134,12 @@ const LeaveRequestForm = ({ onClose }) => {
           </label>
           <input
             type="number"
-            name="leave_day_count"
+            name="days_count"
             value={formData.leave_day_count}
             className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
             disabled
             readOnly
           />
-
         </div>
 
         {/* Submit Buttons */}

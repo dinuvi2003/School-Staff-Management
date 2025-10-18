@@ -3,15 +3,19 @@
 import { hookNow } from '@/hooks/hookNow'
 import React from 'react'
 
+// Manual, deterministic formatting to avoid Intl differences between server & client.
 const Date = () => {
+  const now = hookNow() || new Date()
 
-  const now = hookNow()
+  const day = now.getDate()
+  const year = now.getFullYear()
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+  const month = monthNames[now.getMonth()]
 
-  const structuredDate = new Intl.DateTimeFormat(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(now)
+  const structuredDate = `${day} ${month} ${year}`
 
   return (
     <div>
