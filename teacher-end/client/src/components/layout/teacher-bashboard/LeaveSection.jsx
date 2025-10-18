@@ -24,42 +24,51 @@ const LeaveSection = () => {
 
   useEffect(() => {
 
-    if (!user?.nic) return;
-    console.log("Teacher NIC", user?.nic);
-    if (user.nic) {
-      const teacher_nic = user.nic;
-    }
+    if (!user?.uid) return;
+    console.log("Teacher ID", user?.uid);
+
     const fetchLeaveData = async () => {
 
-      const teacherAllLeavesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${user?.nic}`, {
+      const teacherAllLeavesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${user?.uid}`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       })
       const teacherAllLeavesData = await teacherAllLeavesResponse.json();
 
-      const pendingLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${teacher_nic}/pending`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      })
-      const pendingLeaveData = await pendingLeaveResponse.json();
 
-      const rejectedLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${teacher_nic}/rejected`, {
+      const pendingLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${user?.uid}/pending`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       })
-      const rejectedLeaveData = await rejectedLeaveResponse.json();
+
+      if (user?.uid !== undefined) {
+        const pendingLeaveData = await pendingLeaveResponse.json();
+        setPendingLeaveRequests(pendingLeaveData.leaves);
+      }
+
+
+      const rejectedLeaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/leave/teacher/${user?.uid}/rejected`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (user?.uid !== undefined) {
+        const rejectedLeaveData = await rejectedLeaveResponse.json();
+        setRejectedLeaveRequests(rejectedLeaveData.leaves);
+
+      }
 
       setTotalLeavesRequests(teacherAllLeavesData.leaves);
-      setPendingLeaveRequests(pendingLeaveData.leaves);
-      setRejectedLeaveRequests(rejectedLeaveData.leaves);
+
     }
+
 
     fetchLeaveData();
 
-  }, [user?.nic]);
+  }, [user?.uid]);
 
   const newLeaveRequest = () => {
     setIsPopupOpen(true);
